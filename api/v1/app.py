@@ -17,6 +17,7 @@ def page_not_found(e):
     """note that we set the 404 status explicitly"""
     return jsonify({"error": "Not found"}), 404
 
+
 @app.teardown_appcontext
 def teardown_db(exception):
     """closes the storage on teardown"""
