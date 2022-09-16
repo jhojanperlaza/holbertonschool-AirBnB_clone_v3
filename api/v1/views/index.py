@@ -22,7 +22,7 @@ def index():
 
 @app_views.route('/stats', strict_slashes=False)
 def cout():
-    """returns returns a JSON: status: OK"""
+    """retrieves the number of each objects by type"""
     dict_return = {
         "amenities": storage.count(Amenity),
         "cities": storage.count(City),
