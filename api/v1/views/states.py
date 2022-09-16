@@ -33,8 +33,8 @@ def delete_states(state_id):
     """Deletes a state"""
     linked_states = storage.get(State, state_id)
     if linked_states:
-        storage.close()
         storage.delete(linked_states)
+        storage.save()
         return {}, 200
     else:
         abort(404)
