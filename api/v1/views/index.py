@@ -13,10 +13,12 @@ from models.user import User
 from models.place import Place
 from models.review import Review
 
+
 @app_views.route('/status', strict_slashes=False)
 def index():
     """returns returns a JSON: status: OK"""
     return jsonify({"status": "OK"})
+
 
 @app_views.route('/stats', strict_slashes=False)
 def cout():
