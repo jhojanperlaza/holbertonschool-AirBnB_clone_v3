@@ -78,6 +78,6 @@ def put_cities(city_id):
         for k, v in data.items():
             setattr(linked_city, k, v)
         storage.save()
-        return jsonify(linked_city), 200
+        return linked_city, 200
     else:
         abort(404)
