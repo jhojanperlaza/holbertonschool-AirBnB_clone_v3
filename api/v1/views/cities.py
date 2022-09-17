@@ -51,7 +51,7 @@ def post_citys(state_id):
     """transform the HTTP body request to a dictionary"""
     if not request.json:
         return ("Not a JSON"), 400
-    if 'name' not in request.json.keys():
+    if 'name' not in request.json:
         return ("Missing name"), 400
     linked_states = storage.get(State, state_id)
     if linked_states:
