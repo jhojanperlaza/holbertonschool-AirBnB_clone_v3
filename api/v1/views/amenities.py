@@ -10,56 +10,51 @@ from models.amenity import Amenity
 from models import storage
 
 
-@app_views.route('/states/<state_id>/cities')
-def get_citys(state_id):
-    """Retrieves the list of all State objects"""
-    all_obj = storage.all(City)
-    linked_states = storage.get(State, state_id)
-    if linked_states:
-        lista = []
-        for obj in all_obj.values():
-            lista.append(obj.to_dict())
-        return jsonify(lista)
+@app_views.route('/amenities')
+def get_amenities(amenity_id):
+    """Retrieves the list of all Amenity objects"""
+    all_obj = storage.all(Amenity)
+    if all_obj:
+        return jsonify(all_obj)
     else:
         abort(404)
 
 
-@app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
-def get_City_id(city_id):
-    """Retrieves the list of all State objects with id"""
-    linked_states = storage.get(City, city_id)
-    if linked_states:
-        return jsonify(linked_states.to_dict())
+@app_views.route('amenities/<amenity_id>', strict_slashes=False, methods=['GET'])
+def get_amenities_id(amenity_id):
+    """Retrieves the list of all Amenity objects with id"""
+    linked_amenities = storage.get(Amenity, amenity_id)
+    if linked_amenities:
+        return jsonify(linked_amenities.to_dict())
     else:
         abort(404)
 
 
-@app_views.route('cities/<city_id>', strict_slashes=False, methods=['DELETE'])
-def delete_citys(city_id):
-    """Deletes a city"""
-    linked_states = storage.get(City, city_id)
-    if linked_states:
-        storage.delete(linked_states)
+@app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['DELETE'])
+def delete_amenities(amenity_id):
+    """Deletes a amenity"""
+    linked_amenities = storage.get(Amenity, amenity_id)
+    if linked_amenities:
+        storage.delete(linked_amenities)
         storage.save()
         return {}, 200
     else:
         abort(404)
 
 
-@app_views.route('/states/<state_id>/cities', methods=['POST'])
-def post_cities(state_id):
+@app_views.route('/amenities', methods=['POST'])
+def post_amenities():
     """transform the HTTP body request to a dictionary"""
     if not request.get_json(request):
         return ("Not a JSON"), 400
     if 'name' not in request.get_json(request):
         return ("Missing name"), 400
-    linked_states = storage.get(State, state_id)
-    if linked_states:
+    all_amenities = storage.all(Amenity)
+    if all_amenities:
         data = request.get_json(request)
-        new_inst = City()
+        new_inst = Amenity()
         for k, v in data.items():
             setattr(new_inst, k, v)
-            setattr(new_inst, 'state_id', state_id)
         storage.new(new_inst)
         storage.save()
         return new_inst.to_dict(), 201
@@ -67,17 +62,17 @@ def post_cities(state_id):
         abort(400)
 
 
-@app_views.route('/cities/<city_id>', strict_slashes=False, methods=['PUT'])
-def put_cities(city_id):
-    """Update a name of state"""
-    linked_city = storage.get(City, city_id)
-    if linked_city:
+@app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['PUT'])
+def put_amenities(amenity_id):
+    """Update a name of amenity"""
+    linked_amenities = storage.get(Amenity, amenity_id)
+    if linked_amenities:
         data = request.get_json(request)
         if not data:
             return ("Not a JSON"), 400
         for k, v in data.items():
-            setattr(linked_city, k, v)
+            setattr(linked_amenities, k, v)
         storage.save()
-        return linked_city.to_dict(), 200
+        return linked_amenities.to_dict(), 200
     else:
         abort(404)

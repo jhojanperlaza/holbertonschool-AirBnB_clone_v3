@@ -35,7 +35,7 @@ def get_City_id(city_id):
 
 
 @app_views.route('cities/<city_id>', strict_slashes=False, methods=['DELETE'])
-def delete_citys(city_id):
+def delete_cities(city_id):
     """Deletes a city"""
     linked_states = storage.get(City, city_id)
     if linked_states:
