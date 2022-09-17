@@ -51,25 +51,18 @@ def post_cities(state_id):
     """transform the HTTP body request to a dictionary"""
     if not request.get_json(request):
         return ("Not a JSON"), 400
-    if 'name' not in request.json:
+    if 'name' not in request.get_json(request):
         return ("Missing name"), 400
     linked_states = storage.get(State, state_id)
     if linked_states:
         data = request.get_json(request)
-        print(data)
-        print(type(data))
-        if data:
-            new_inst = City()
-            for k, v in data.items():
-                if (k != 'name'):
-                    return jsonify("Missing name"), 400
-                setattr(new_inst, k, v)
-                setattr(new_inst, 'state_id', state_id)
-            storage.new(new_inst)
-            storage.save()
-            return new_inst.to_dict(), 201
-        else:
-            return jsonify("Not a JSON"), 400
+        new_inst = City()
+        for k, v in data.items():
+            setattr(new_inst, k, v)
+            setattr(new_inst, 'state_id', state_id)
+        storage.new(new_inst)
+        storage.save()
+        return new_inst.to_dict(), 201
     else:
         abort(400)
 
