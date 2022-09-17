@@ -3,7 +3,6 @@
 retrieve an object into a valid JSON
 """
 
-from operator import ne
 from api.v1.views import app_views
 from models import storage
 from models.state import State
