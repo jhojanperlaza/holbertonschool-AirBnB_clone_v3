@@ -72,12 +72,12 @@ def put_cities(city_id):
     """Update a name of state"""
     linked_city = storage.get(City, city_id)
     if linked_city:
-        data = request.json
+        data = request.get_json(request)
         if not data:
             return ("Not a JSON"), 400
         for k, v in data.items():
             setattr(linked_city, k, v)
-            storage.save()
-            return linked_city.to_dict(), 200
+        storage.save()
+        return linked_city.to_dict(), 200
     else:
         abort(404)
