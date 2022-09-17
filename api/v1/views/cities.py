@@ -78,6 +78,6 @@ def put_cities(city_id):
         for k, v in data.items():
             setattr(linked_city, k, v)
         storage.save()
-        return linked_city.to_dict(), 200
+        return linked_city.__dict__(), 200
     else:
         abort(404)
