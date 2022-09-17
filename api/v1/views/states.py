@@ -62,11 +62,13 @@ def post_states():
 def put_states(state_id):
     """Update a name of state"""
     linked_states = storage.get(State, state_id)
-    data = request.json
-    print(linked_states)
-    for k, v in data.items():
-        setattr(linked_states, k, v)
-        storage.save()
-        return linked_states.to_dict(), 200
+    if linked_states:
+        data = request.json
+        if not data:
+            return ("Not a JSON"), 400
+        for k, v in data.items():
+            setattr(linked_states, k, v)
+            storage.save()
+            return linked_states.to_dict(), 200
     else:
         abort(404)
