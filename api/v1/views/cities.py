@@ -49,13 +49,15 @@ def delete_citys(city_id):
 @app_views.route('/states/<state_id>/cities', methods=['POST'])
 def post_cities(state_id):
     """transform the HTTP body request to a dictionary"""
-    if not request.get_json:
+    if not request.get_json(request):
         return ("Not a JSON"), 400
     if 'name' not in request.json:
         return ("Missing name"), 400
     linked_states = storage.get(State, state_id)
     if linked_states:
-        data = request.get_json
+        data = request.get_json(request)
+        print(data)
+        print(type(data))
         if data:
             new_inst = City()
             for k, v in data.items():
