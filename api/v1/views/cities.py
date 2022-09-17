@@ -41,7 +41,7 @@ def delete_citys(city_id):
     if linked_states:
         storage.delete(linked_states)
         storage.save()
-        return {}, 200
+        return "bad", 200
     else:
         abort(404)
 
@@ -78,6 +78,6 @@ def put_cities(city_id):
         for k, v in data.items():
             setattr(linked_city, k, v)
         storage.save()
-        return linked_city, 200
+        return linked_city.to_dict(), 200
     else:
         abort(404)
