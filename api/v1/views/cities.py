@@ -5,12 +5,12 @@ retrieve an object into a valid JSON
 
 from models.state import State
 from api.v1.views import app_views
-from flask import Flask, jsonify, abort, make_response, request
+from flask import Flask, jsonify, abort, request
 from models.city import City
 from models import storage
 
 
-@app_views.route('/states/<state_id>/cities')
+@app_views.route('/states/<state_id>/cities', strict_slashes=False)
 def get_citys(state_id):
     """Retrieves the list of all State objects"""
     all_obj = storage.all(City)
@@ -50,9 +50,9 @@ def delete_citys(city_id):
 def post_citys(state_id):
     """transform the HTTP body request to a dictionary"""
     if not request.json:
-        abort(400, "Not a JSON")
-    if 'name' not in request.json:
-        abort(400, "Missing name")
+        return ("Not a JSON"), 400
+    if 'name' not in request.json.keys():
+        return ("Missing name"), 400
     linked_states = storage.get(State, state_id)
     if linked_states:
         data = request.json
@@ -70,11 +70,12 @@ def post_citys(state_id):
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['PUT'])
 def put_citys(city_id):
     """Update a name of state"""
+    data = request.json
+    if not data:
+        return ("Not a JSON"), 400
+
     linked_city = storage.get(City, city_id)
     if linked_city:
-        data = request.json
-        if not data:
-            abort(400, "Not a JSON")
         for k, v in data.items():
             setattr(linked_city, k, v)
             storage.save()
