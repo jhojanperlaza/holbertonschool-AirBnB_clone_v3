@@ -5,7 +5,7 @@ retrieve an object into a valid JSON
 
 from models.state import State
 from api.v1.views import app_views
-from flask import Flask, jsonify, abort, make_response, request
+from flask import jsonify, abort, request
 from models.city import City
 from models import storage
 
@@ -21,7 +21,7 @@ def get_citys(state_id):
             lista.append(obj.to_dict())
         return jsonify(lista)
     else:
-        return "a mimir"
+        abort(404)
 
 
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
