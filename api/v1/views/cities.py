@@ -23,6 +23,7 @@ def get_citys(state_id):
     else:
         return "a mimir"
 
+
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
 def get_City_id(city_id):
     """Retrieves the list of all State objects with id"""
@@ -67,7 +68,7 @@ def post_citys(state_id):
 
 
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['PUT'])
-def put_states(city_id):
+def put_citys(city_id):
     """Update a name of state"""
     linked_city = storage.get(City, city_id)
     if linked_city:
