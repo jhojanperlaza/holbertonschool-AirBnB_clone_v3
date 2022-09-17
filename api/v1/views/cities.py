@@ -47,28 +47,31 @@ def delete_citys(city_id):
 
 
 @app_views.route('/states/<state_id>/cities', methods=['POST'])
-def post_citys(state_id):
+def post_cities(state_id):
     """transform the HTTP body request to a dictionary"""
-    if not request.json:
+    if not request.get_json:
         return ("Not a JSON"), 400
     if 'name' not in request.json:
         return ("Missing name"), 400
     linked_states = storage.get(State, state_id)
     if linked_states:
-        data = request.json
-        new_inst = City()
-        for k, v in data.items():
-            setattr(new_inst, k, v)
-            setattr(new_inst, 'state_id', state_id)
-        storage.new(new_inst)
-        storage.save()
-        return new_inst.to_dict(), 201
+        data = request.get_json
+        if data:
+            new_inst = City()
+            for k, v in data.items():
+                setattr(new_inst, k, v)
+                setattr(new_inst, 'state_id', state_id)
+            storage.new(new_inst)
+            storage.save()
+            return new_inst.to_dict(), 200
+        else:
+            return jsonify("Not a JSON"), 400
     else:
         abort(400)
 
 
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['PUT'])
-def put_citys(city_id):
+def put_cities(city_id):
     """Update a name of state"""
     linked_city = storage.get(City, city_id)
     if linked_city:
