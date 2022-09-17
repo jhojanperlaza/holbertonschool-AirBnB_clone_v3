@@ -59,11 +59,13 @@ def post_cities(state_id):
         if data:
             new_inst = City()
             for k, v in data.items():
+                if (k != 'name'):
+                    return jsonify("Missing name"), 400
                 setattr(new_inst, k, v)
                 setattr(new_inst, 'state_id', state_id)
             storage.new(new_inst)
             storage.save()
-            return new_inst.to_dict(), 200
+            return new_inst.to_dict(), 201
         else:
             return jsonify("Not a JSON"), 400
     else:
