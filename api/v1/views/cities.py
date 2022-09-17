@@ -62,7 +62,7 @@ def post_cities(state_id):
             setattr(new_inst, 'state_id', state_id)
         storage.new(new_inst)
         storage.save()
-        return new_inst.to_dict(), 201
+        return jsonify(new_inst.to_dict(), 201)
     else:
         abort(400)
 
@@ -78,6 +78,6 @@ def put_cities(city_id):
         for k, v in data.items():
             setattr(linked_city, k, v)
         storage.save()
-        return linked_city.to_dict(), 200
+        return jsonify(linked_city.to_dict(), 200)
     else:
         abort(404)
