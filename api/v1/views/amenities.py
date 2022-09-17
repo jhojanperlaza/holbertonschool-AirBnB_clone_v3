@@ -11,7 +11,7 @@ from models import storage
 
 
 @app_views.route('/amenities')
-def get_amenities(amenity_id):
+def get_amenities():
     """Retrieves the list of all Amenity objects"""
     all_obj = storage.all(Amenity)
     if all_obj:
