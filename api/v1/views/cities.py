@@ -70,12 +70,11 @@ def post_citys(state_id):
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['PUT'])
 def put_citys(city_id):
     """Update a name of state"""
-    data = request.json
-    if not data:
-        return ("Not a JSON"), 400
-
     linked_city = storage.get(City, city_id)
     if linked_city:
+        data = request.json
+        if not data:
+            return ("Not a JSON"), 400
         for k, v in data.items():
             setattr(linked_city, k, v)
             storage.save()
