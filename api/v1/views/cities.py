@@ -1,23 +1,19 @@
 #!/usr/bin/python3
-"""
-retrieve an object into a valid JSON
-"""
-
-from models.state import State
+""" View for City objects that handles default API actions """
 from api.v1.views import app_views
-from flask import Flask, jsonify, abort, make_response, request
-from models.city import City
+from flask import jsonify, abort, make_response, request
 from models import storage
+from models.state import State
+from models.city import City
 
 
 @app_views.route('/states/<state_id>/cities')
 def get_citys(state_id):
     """Retrieves the list of all State objects"""
-    all_obj = storage.all(City)
     linked_states = storage.get(State, state_id)
     if linked_states:
         lista = []
-        for obj in all_obj.values():
+        for obj in linked_states.cities:
             lista.append(obj.to_dict())
         return jsonify(lista)
     else:
@@ -62,22 +58,27 @@ def post_citys(state_id):
             setattr(new_inst, 'state_id', state_id)
         storage.new(new_inst)
         storage.save()
-        return new_inst.to_dict(), 201
+        return  make_response(jsonify(new_inst.to_dict()), 201)
     else:
         abort(400)
 
 
-@app_views.route('/cities/<city_id>', strict_slashes=False, methods=['PUT'])
-def put_citys(city_id):
-    """Update a name of state"""
-    linked_city = storage.get(City, city_id)
-    if linked_city:
-        data = request.json
-        if not data:
-            return ("Not a JSON"), 400
-        for k, v in data.items():
-            setattr(linked_city, k, v)
-            storage.save()
-            return linked_city.to_dict(), 200
-    else:
+
+@app_views.route('/cities/<city_id>', methods=['PUT'],
+                 strict_slashes=False)
+def put_city(city_id):
+    """ Updates a City object """
+    city = storage.get("City", city_id)
+    if not city:
         abort(404)
+
+    body_request = request.get_json()
+    if not body_request:
+        abort(400, "Not a JSON")
+
+    for k, v in body_request.items():
+        if k not in ['id', 'state_id', 'created_at', 'updated_at']:
+            setattr(city, k, v)
+
+    storage.save()
+    return make_response(jsonify(city.to_dict()), 200)
