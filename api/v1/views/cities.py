@@ -20,25 +20,26 @@ def get_citys(state_id):
         abort(404)
 
 
-@app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
-def r_city_id(city_id):
-    """ Retrieves a City object """
-    city = storage.get("City", city_id)
-    if not city:
+@app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
+def get_City_id(city_id):
+    """Retrieves the list of all State objects with id"""
+    linked_states = storage.get(City, city_id)
+    if linked_states:
+        return jsonify(linked_states.to_dict())
+    else:
         abort(404)
-    return jsonify(city.to_dict())
 
 
-@app_views.route('/cities/<city_id>', methods=['DELETE'],
-                 strict_slashes=False)
-def del_city(city_id):
-    """ Deletes a City object """
-    city = storage.get("City", city_id)
-    if not city:
+@app_views.route('cities/<city_id>', strict_slashes=False, methods=['DELETE'])
+def delete_citys(city_id):
+    """Deletes a state"""
+    linked_states = storage.get(City, city_id)
+    if linked_states:
+        storage.delete(linked_states)
+        storage.save()
+        return {}, 200
+    else:
         abort(404)
-    city.delete()
-    storage.save()
-    return make_response(jsonify({}), 200)
 
 
 @app_views.route('/states/<state_id>/cities', methods=['POST'],
