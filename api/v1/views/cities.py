@@ -42,23 +42,23 @@ def delete_citys(city_id):
         abort(404)
 
 
-@app_views.route('/states/<state_id>/cities', methods=['POST'])
+@app_views.route('/states/<state_id>/cities', methods=['POST'],
+                 strict_slashes=False)
 def post_citys(state_id):
-    """transform the HTTP body request to a dictionary"""
+    """ Creates a City object """
+    state = storage.get("State", state_id)
+    if not state:
+        abort(404)
     new_city = request.get_json()
     if not new_city:
-        return ("Not a JSON"), 400
-    if 'name' not in request.json:
-        return ("Missing name"), 400
-    linked_states = storage.get(State, state_id)
-    if linked_states:
-        new_inst = City(**new_city)
-        setattr(new_inst, 'state_id', state_id)
-        storage.new(new_inst)
-        storage.save()
-        return  make_response(jsonify(new_inst.to_dict()), 201)
-    else:
-        abort(400)
+        abort(400, "Not a JSON")
+    if "name" not in new_city:
+        abort(400, "Missing name")
+    city = City(**new_city)
+    setattr(city, 'state_id', state_id)
+    storage.new(city)
+    storage.save()
+    return make_response(jsonify(city.to_dict()), 201)
 
 
 @app_views.route('/cities/<city_id>', methods=['PUT'],
