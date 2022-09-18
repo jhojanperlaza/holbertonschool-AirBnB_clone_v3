@@ -7,18 +7,17 @@ from models.state import State
 from models.city import City
 
 
-@app_views.route('/states/<state_id>/cities', strict_slashes=False,
-                 methods=['GET'],)
+@app_views.route('/states/<state_id>/cities')
 def get_citys(state_id):
     """Retrieves the list of all State objects"""
-    all_obj = storage.all(City)
     linked_states = storage.get(State, state_id)
-    if not linked_states:
+    if linked_states:
+        lista = []
+        for obj in linked_states.cities:
+            lista.append(obj.to_dict())
+        return jsonify(lista)
+    else:
         abort(404)
-    lista = []
-    for obj in all_obj.values():
-        lista.append(obj.to_dict())
-    return jsonify(lista)
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
