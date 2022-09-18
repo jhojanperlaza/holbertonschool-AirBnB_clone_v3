@@ -61,7 +61,7 @@ def post_citys(state_id):
             setattr(new_inst, 'state_id', state_id)
         storage.new(new_inst)
         storage.save()
-        return new_inst.to_dict(), 201
+        return make_response(jsonify(new_inst.to_dict()), 201)
     else:
         abort(400)
 
