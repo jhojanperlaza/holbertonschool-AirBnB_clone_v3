@@ -5,12 +5,12 @@ retrieve an object into a valid JSON
 
 from models.state import State
 from api.v1.views import app_views
-from flask import Flask, jsonify, abort, request
+from flask import Flask, jsonify, abort, make_response, request
 from models.city import City
 from models import storage
 
 
-@app_views.route('/states/<state_id>/cities', strict_slashes=False)
+@app_views.route('/states/<state_id>/cities')
 def get_citys(state_id):
     """Retrieves the list of all State objects"""
     all_obj = storage.all(City)
