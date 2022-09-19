@@ -59,7 +59,7 @@ def post_User():
         setattr(new_inst, k, v)
         storage.new(new_inst)
         storage.save()
-        return new_inst.to_dict(), 201
+    return new_inst.to_dict(), 201
 
 
 @app_views.route('/users/<user_id>', methods=['PUT'])
