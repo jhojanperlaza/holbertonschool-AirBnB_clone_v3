@@ -26,25 +26,26 @@ def get_place(city_id):
         abort(404)
 
 
-@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
-def r_place_id(place_id):
-    """ Retrieves a Place object """
+@app_views.route('places/<place_id>', methods=['GET'])
+def get_place_id(place_id):
+    """Retrieves the list of all Amenity objects with id"""
+    linked_place = storage.get(Place, place_id)
+    if linked_place:
+        return jsonify(linked_place.to_dict())
+    else:
+        abort(404)
+
+
+@app_views.route('/places/<place_id>', methods=['DELETE'],
+                 strict_slashes=False)
+def del_place(place_id):
+    """ Deletes a Place object """
     place = storage.get("Place", place_id)
     if not place:
         abort(404)
-    return jsonify(place.to_dict())
-
-
-@app_views.route('/places/<place_id>', strict_slashes=False, methods=['DELETE'])
-def delete_place(place_id):
-    """Deletes a User"""
-    linked_user = storage.get(Place, place_id)
-    if linked_user:
-        storage.delete(linked_user)
-        storage.save()
-        return {}, 200
-    else:
-        abort(404)
+    place.delete()
+    storage.save()
+    return jsonify({}), 200
 
 
 @app_views.route('cities/<city_id>/places', methods=['POST'], strict_slashes=False)
