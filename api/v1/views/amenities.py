@@ -10,14 +10,14 @@ from models.amenity import Amenity
 from models import storage
 
 
-@app_views.route('/amenities')
+@app_views.route('/amenities', strict_slashes=False)
 def get_amenities():
-    """Retrieves the list of all Amenity objects"""
+    """Retrieves the list of all State objects"""
     all_obj = storage.all(Amenity)
-    if all_obj:
-        return jsonify(all_obj)
-    else:
-        abort(404)
+    lista = []
+    for obj in all_obj.values():
+        lista.append(obj.to_dict())
+    return jsonify(lista)
 
 
 @app_views.route('amenities/<amenity_id>', strict_slashes=False, methods=['GET'])
@@ -42,24 +42,22 @@ def delete_amenities(amenity_id):
         abort(404)
 
 
-@app_views.route('/amenities', methods=['POST'])
+@app_views.route('/amenities', methods=['POST'],
+                 strict_slashes=False)
 def post_amenities():
-    """transform the HTTP body request to a dictionary"""
-    if not request.get_json(request):
-        return ("Not a JSON"), 400
-    if 'name' not in request.get_json(request):
-        return ("Missing name"), 400
-    all_amenities = storage.all(Amenity)
-    if all_amenities:
-        data = request.get_json(request)
-        new_inst = Amenity()
-        for k, v in data.items():
-            setattr(new_inst, k, v)
+    """ Creates a City object """
+    new_amenities = request.get_json(request)
+    if not new_amenities:
+        abort(400, "Not a JSON")
+    if "name" not in new_amenities:
+        abort(400, "Missing name")
+    data = request.json
+    new_inst = Amenity()
+    for k, v in data.items():
+        setattr(new_inst, k, v)
         storage.new(new_inst)
         storage.save()
         return new_inst.to_dict(), 201
-    else:
-        abort(400)
 
 
 @app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['PUT'])
