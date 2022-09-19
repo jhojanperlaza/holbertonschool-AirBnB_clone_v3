@@ -53,13 +53,10 @@ def post_user():
     if "password" not in new_user:
         abort(400, "Missing password")
 
-    data = request.json
-    new_inst = User()
-    for k, v in data.items():
-        setattr(new_inst, k, v)
-        storage.new(new_inst)
-        storage.save()
-    return jsonify(new_inst.to_dict()), 201
+    user = User(**new_user)
+    storage.new(user)
+    storage.save()
+    return jsonify(user.to_dict()), 201
 
 
 @app_views.route('/users/<user_id>', methods=['PUT'])
