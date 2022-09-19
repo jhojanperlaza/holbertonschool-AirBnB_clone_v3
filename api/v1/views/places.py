@@ -36,21 +36,25 @@ def get_place_id(place_id):
         abort(404)
 
 
-@app_views.route('/places/<place_id>', methods=['DELETE'],
-                 strict_slashes=False)
-def del_place(place_id):
-    """ Deletes a Place object """
-    place = storage.get("Place", place_id)
-    if not place:
+@app_views.route('/places/<place_id>', strict_slashes=False, methods=['DELETE'])
+def delete_place(place_id):
+    """Deletes a User"""
+    linked_user = storage.get(Place, place_id)
+    if linked_user:
+        storage.delete(linked_user)
+        storage.save()
+        return {}, 200
+    else:
         abort(404)
-    place.delete()
-    storage.save()
-    return jsonify({}), 200
 
 
-@app_views.route('cities/<city_id>/places', methods=['POST'], strict_slashes=False)
+@app_views.route('/cities/<city_id>/places', methods=['POST'],
+                 strict_slashes=False)
 def post_place(city_id):
-    """ Creates a User object """
+    """ Creates a Place object """
+    city = storage.get("City", city_id)
+    if not city:
+        abort(404)
     new_place = request.get_json()
     if not new_place:
         abort(400, "Not a JSON")
@@ -60,16 +64,12 @@ def post_place(city_id):
     if not storage.get("User", user_id):
         abort(404)
     if "name" not in new_place:
-        return ("Missing name"), 400
-
-    linked_places = storage.get(City, city_id)
-    if linked_places:
-        user = User(**new_place)
-        storage.new(user)
-        storage.save()
-        return jsonify(user.to_dict()), 201
-    else:
-        abort(404)
+        abort(400, "Missing name")
+    place = Place(**new_place)
+    setattr(place, 'city_id', city_id)
+    storage.new(place)
+    storage.save()
+    return jsonify(place.to_dict()), 201
 
 
 @app_views.route('places/<place_id>', methods=['PUT'])
