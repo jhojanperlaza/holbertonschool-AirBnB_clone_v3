@@ -11,24 +11,28 @@ from models.user import User
 from models import storage
 
 
-@app_views.route('/cities/<city_id>/places', methods=['GET'],
-                 strict_slashes=False)
-def places(city_id):
-    """ Retrieves the list of all Place objects """
-    city = storage.get("City", city_id)
-    if not city:
-        abort(404)
-    return jsonify([place.to_dict() for place in city.places])
-
-
-@app_views.route('places/<place_id>', methods=['GET'])
-def get_place_id(place_id):
-    """Retrieves the list of all Amenity objects with id"""
-    linked_place = storage.get(Place, place_id)
-    if linked_place:
-        return jsonify(linked_place.to_dict())
+@app_views.route('cities/<city_id>/places', strict_slashes=False)
+def get_place(city_id):
+    """Retrieves the list of all State objects"""
+    linked_city = storage.get(City, city_id)
+    if linked_city:
+        all_obj = storage.all(Place)
+        lista = []
+        for obj in all_obj.values():
+            if obj.city_id == city_id:
+                lista.append(obj.to_dict())
+        return jsonify(lista)
     else:
         abort(404)
+
+
+@app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
+def r_place_id(place_id):
+    """ Retrieves a Place object """
+    place = storage.get("Place", place_id)
+    if not place:
+        abort(404)
+    return jsonify(place.to_dict())
 
 
 @app_views.route('/places/<place_id>', strict_slashes=False, methods=['DELETE'])
