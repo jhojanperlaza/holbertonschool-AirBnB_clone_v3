@@ -45,7 +45,7 @@ def delete_User(user_id):
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def post_user():
     """ Creates a User object """
-    new_user = request.get_json(request)
+    new_user = request.get_json()
     if not new_user:
         abort(400, "Not a JSON")
     if "email" not in new_user:
