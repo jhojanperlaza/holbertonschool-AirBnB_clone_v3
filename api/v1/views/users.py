@@ -41,22 +41,25 @@ def delete_User(user_id):
     else:
         abort(404)
 
+
 @app_views.route('/users', methods=['POST'])
 def post_User():
-    """ Creates a City object """
-    new_user = request.get_json(request)
+    """ Creates a User object """
+    new_user = request.get_json()
     if not new_user:
         abort(400, "Not a JSON")
     if "email" not in new_user:
         abort(400, "Missing email")
     if "password" not in new_user:
         abort(400, "Missing password")
+
     data = request.json
     new_inst = User()
     for k, v in data.items():
         setattr(new_inst, k, v)
         storage.new(new_inst)
         storage.save()
+        return new_inst.to_dict(), 201
 
 
 @app_views.route('/users/<user_id>', methods=['PUT'])
