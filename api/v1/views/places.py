@@ -48,13 +48,9 @@ def delete_place(place_id):
         abort(404)
 
 
-@app_views.route('/cities/<city_id>/places', methods=['POST'],
-                 strict_slashes=False)
+@app_views.route('cities/<city_id>/places', methods=['POST'], strict_slashes=False)
 def post_place(city_id):
-    """ Creates a Place object """
-    city = storage.get("City", city_id)
-    if not city:
-        abort(404)
+    """ Creates a User object """
     new_place = request.get_json()
     if not new_place:
         abort(400, "Not a JSON")
@@ -64,25 +60,34 @@ def post_place(city_id):
     if not storage.get("User", user_id):
         abort(404)
     if "name" not in new_place:
-        abort(400, "Missing name")
-    place = Place(**new_place)
-    setattr(place, 'city_id', city_id)
-    storage.new(place)
-    storage.save()
-    return jsonify(place.to_dict()), 201
+        return ("Missing name"), 400
 
-
-@app_views.route('places/<place_id>', methods=['PUT'])
-def put_place(place_id):
-    """Update a name of amenity"""
-    linked_place = storage.get(User, place_id)
-    if linked_place:
-        data = request.get_json(request)
-        if not data:
-            return ("Not a JSON"), 400
-        for k, v in data.items():
-            setattr(linked_place, k, v)
+    linked_places = storage.get(City, city_id)
+    if linked_places:
+        user = User(**new_place)
+        storage.new(user)
         storage.save()
-        return linked_place.to_dict(), 200
+        return jsonify(user.to_dict()), 201
     else:
         abort(404)
+
+
+@app_views.route('/places/<place_id>', methods=['PUT'],
+                 strict_slashes=False)
+def put_place(place_id):
+    """ Updates a Place object """
+    place = storage.get("Place", place_id)
+    if not place:
+        abort(404)
+
+    body_request = request.get_json()
+    if not body_request:
+        abort(400, "Not a JSON")
+
+    for k, v in body_request.items():
+        if k not in ['id', 'user_id', 'city_at',
+                     'created_at', 'updated_at']:
+            setattr(place, k, v)
+
+    storage.save()
+    return jsonify(place.to_dict()), 200
