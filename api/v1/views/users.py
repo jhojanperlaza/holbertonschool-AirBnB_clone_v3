@@ -59,21 +59,6 @@ def post_User():
         storage.save()
 
 
-@app_views.route('/users/<user_id>', strict_slashes=False, methods=['PUT'])
-def put_User(user_id):
-    """Update a name of User"""
-    linked_user = storage.get(User, user_id)
-    if linked_user:
-        data = request.get_json(request)
-        if not data:
-            return ("Not a JSON"), 400
-        for k, v in data.items():
-            setattr(linked_user, k, v)
-        storage.save()
-        return linked_user.to_dict(), 200
-    else:
-        abort(404)
-
 @app_views.route('/users/<user_id>', methods=['PUT'])
 def put_User(user_id):
     """Update a name of amenity"""
