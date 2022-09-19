@@ -20,7 +20,7 @@ def get_amenities():
     return jsonify(lista)
 
 
-@app_views.route('amenities/<amenity_id>', strict_slashes=False, methods=['GET'])
+@app_views.route('amenities/<amenity_id>', methods=['GET'])
 def get_amenities_id(amenity_id):
     """Retrieves the list of all Amenity objects with id"""
     linked_amenities = storage.get(Amenity, amenity_id)
@@ -30,7 +30,7 @@ def get_amenities_id(amenity_id):
         abort(404)
 
 
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['DELETE'])
+@app_views.route('/amenities/<amenity_id>', methods=['DELETE'])
 def delete_amenities(amenity_id):
     """Deletes a amenity"""
     linked_amenities = storage.get(Amenity, amenity_id)
@@ -60,7 +60,7 @@ def post_amenities():
         return new_inst.to_dict(), 201
 
 
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['PUT'])
+@app_views.route('/amenities/<amenity_id>', methods=['PUT'])
 def put_amenities(amenity_id):
     """Update a name of amenity"""
     linked_amenities = storage.get(Amenity, amenity_id)
