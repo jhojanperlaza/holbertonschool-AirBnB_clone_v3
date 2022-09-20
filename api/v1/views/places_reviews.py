@@ -3,17 +3,12 @@
 from api.v1.views import app_views
 from flask import jsonify, abort, make_response, request
 from models import storage
-from models import review
-from models.city import City
 from models.review import Review
-import requests
-import json
-from os import getenv
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['GET'],
                  strict_slashes=False)
-def places(place_id):
+def r_reviews(place_id):
     """ Retrieves the list of all Review objects of a Place """
     place = storage.get("Place", place_id)
     if not place:
@@ -22,7 +17,7 @@ def places(place_id):
 
 
 @app_views.route('/reviews/<review_id>', methods=['GET'], strict_slashes=False)
-def r_place_id(review_id):
+def r_reviews_id(review_id):
     """ Retrieves a Review object """
     review = storage.get("Review", review_id)
     if not review:
@@ -32,7 +27,7 @@ def r_place_id(review_id):
 
 @app_views.route('/reviews/<review_id>', methods=['DELETE'],
                  strict_slashes=False)
-def del_place(review_id):
+def del_review(review_id):
     """ Deletes a Review object """
     review = storage.get("Review", review_id)
     if not review:
@@ -44,10 +39,10 @@ def del_place(review_id):
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'],
                  strict_slashes=False)
-def post_place(place_id):
+def post_review(place_id):
     """ Creates a Review object """
-    review = storage.get("Place", place_id)
-    if not review:
+    place = storage.get("Place", place_id)
+    if not place:
         abort(404)
     new_review = request.get_json()
     if not new_review:
@@ -68,7 +63,7 @@ def post_place(place_id):
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'],
                  strict_slashes=False)
-def put_place(review_id):
+def put_review(review_id):
     """ Updates a Review object """
     review = storage.get("Review", review_id)
     if not review:
